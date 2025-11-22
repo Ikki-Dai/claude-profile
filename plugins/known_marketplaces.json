@@ -1,0 +1,10 @@
+{
+  "awesome-claude-skills": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/ComposioHQ/awesome-claude-skills.git"
+    },
+    "installLocation": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\awesome-claude-skills",
+    "lastUpdated": "2025-11-21T23:46:41.554Z"
+  }
+}

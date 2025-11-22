@@ -1,0 +1,16 @@
+## claude code .gitignore
+
+### files
+settings.json
+settings.local.json
+debug-input.json
+history.jsonl
+
+
+### dir
+debug/
+file-history/
+projects/
+todos/
+shell-snapshots/
+statsig/

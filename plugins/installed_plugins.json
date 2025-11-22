@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "plugins": {
+    "skill-creator@awesome-claude-skills": {
+      "version": "unknown",
+      "installedAt": "2025-11-22T01:42:15.008Z",
+      "lastUpdated": "2025-11-22T01:42:15.008Z",
+      "installPath": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\awesome-claude-skills\\skill-creator",
+      "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b",
+      "isLocal": true
+    },
+    "template-skill@awesome-claude-skills": {
+      "version": "unknown",
+      "installedAt": "2025-11-22T01:42:15.008Z",
+      "lastUpdated": "2025-11-22T01:42:15.008Z",
+      "installPath": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\awesome-claude-skills\\template-skill",
+      "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b",
+      "isLocal": true
+    }
+  }
+}
