@@ -1,0 +1,57 @@
+### 基本示例 - 获取用户列表
+GET {{baseUrl}}/{{apiVersion}}/users
+Accept: application/json
+
+###
+
+### 获取特定用户信息
+GET {{baseUrl}}/{{apiVersion}}/users/123
+Accept: application/json
+Authorization: Bearer {{apiKey}}
+
+###
+
+### 创建新用户
+POST {{baseUrl}}/{{apiVersion}}/users
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "name": "张三",
+  "email": "zhangsan@example.com",
+  "age": 30,
+  "department": "技术部"
+}
+
+###
+
+### 更新用户信息
+PUT {{baseUrl}}/{{apiVersion}}/users/123
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "name": "李四",
+  "email": "lisi@example.com",
+  "age": 28,
+  "department": "产品部"
+}
+
+###
+
+### 删除用户
+DELETE {{baseUrl}}/{{apiVersion}}/users/123
+Authorization: Bearer {{apiKey}}
+
+###
+
+### 搜索用户（带查询参数）
+GET {{baseUrl}}/{{apiVersion}}/users/search?name=张&department=技术部&page=1&limit=10
+Accept: application/json
+Authorization: Bearer {{apiKey}}
+
+###
+
+### 健康检查
+GET {{baseUrl}}/health
+Accept: application/json

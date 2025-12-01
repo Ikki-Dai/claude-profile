@@ -1,0 +1,87 @@
+### 基本身份验证 - Basic Auth
+GET {{baseUrl}}/{{apiVersion}}/secure-data
+Accept: application/json
+Authorization: Basic {{username:password}}
+
+###
+
+### Bearer Token 身份验证
+GET {{baseUrl}}/{{apiVersion}}/profile
+Accept: application/json
+Authorization: Bearer {{apiKey}}
+
+###
+
+### API Key 身份验证（Header方式）
+GET {{baseUrl}}/{{apiVersion}}/api-key-protected
+Accept: application/json
+X-API-Key: {{apiKey}}
+
+###
+
+### API Key 身份验证（Query参数方式）
+GET {{baseUrl}}/{{apiVersion}}/api-key-protected?api_key={{apiKey}}
+Accept: application/json
+
+###
+
+### 用户登录获取 Token
+POST {{baseUrl}}/{{apiVersion}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+client.test("登录成功", function() {
+  client.assert(response.status === 200, "状态码应为200");
+  client.assert(response.body.token, "响应应包含token");
+  client.global.set("authToken", response.body.token);
+});
+%}
+
+###
+
+### 使用获取到的 Token
+GET {{baseUrl}}/{{apiVersion}}/protected-resource
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+### 刷新 Token
+POST {{baseUrl}}/{{apiVersion}}/auth/refresh
+Content-Type: application/json
+Authorization: Bearer {{refreshToken}}
+
+###
+
+### 注销登录
+POST {{baseUrl}}/{{apiVersion}}/auth/logout
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+### OAuth2 密码模式
+POST {{baseUrl}}/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&client_secret={{clientSecret}}&username={{username}}&password={{password}}
+
+> {%
+client.test("获取OAuth2令牌", function() {
+  client.assert(response.status === 200);
+  client.assert(response.body.access_token);
+  client.global.set("accessToken", response.body.access_token);
+});
+%}
+
+###
+
+### 使用OAuth2令牌
+GET {{baseUrl}}/{{apiVersion}}/oauth-protected
+Accept: application/json
+Authorization: Bearer {{accessToken}}

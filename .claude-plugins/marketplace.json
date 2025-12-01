@@ -37,6 +37,12 @@
       "description": "Universal technical documentation search using Context7 API for any programming language, framework, library, or technical tutorial across the entire technology ecosystem.",
       "source": "./skills/universal-docs-search",
       "category": "development"
+    },
+    {
+      "name": "jetbrains-http-client",
+      "description": "Execute .http API test files using JetBrains ijhttp CLI tool. This skill provides API testing capabilities similar to IntelliJ IDEA's HTTP Client from the command line, supporting multiple authentication methods, environment management, and comprehensive testing workflows.",
+      "source": "./skills/jetbrains-http-client",
+      "category": "development"
     }
   ]
 }

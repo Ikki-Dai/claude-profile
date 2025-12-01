@@ -1,0 +1,247 @@
+### 用户管理 API 完整测试套件
+
+### 1. 获取所有用户
+GET {{baseUrl}}/{{apiVersion}}/users
+Accept: application/json
+
+> {%
+client.test("获取用户列表 - 状态码检查", function() {
+  client.assert(response.status === 200, "状态码应为200");
+});
+
+client.test("获取用户列表 - 响应格式检查", function() {
+  client.assert(response.body.users && Array.isArray(response.body.users), "响应应包含用户数组");
+});
+
+client.test("获取用户列表 - 用户数量检查", function() {
+  client.assert(response.body.users.length >= 0, "用户数组不应为空");
+});
+%}
+
+###
+
+### 2. 创建新用户
+POST {{baseUrl}}/{{apiVersion}}/users
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "name": "测试用户",
+  "email": "test@example.com",
+  "age": 25,
+  "department": "测试部"
+}
+
+> {%
+client.test("创建用户 - 状态码检查", function() {
+  client.assert(response.status === 201, "创建成功状态码应为201");
+});
+
+client.test("创建用户 - 响应数据检查", function() {
+  client.assert(response.body.id, "响应应包含用户ID");
+  client.assert(response.body.name === "测试用户", "用户名应匹配");
+  client.global.set("newUserId", response.body.id);
+});
+%}
+
+###
+
+### 3. 获取新创建的用户
+GET {{baseUrl}}/{{apiVersion}}/users/{{newUserId}}
+Accept: application/json
+Authorization: Bearer {{apiKey}}
+
+> {%
+client.test("获取用户详情 - 状态码检查", function() {
+  client.assert(response.status === 200, "获取用户详情状态码应为200");
+});
+
+client.test("获取用户详情 - 数据完整性检查", function() {
+  client.assert(response.body.id == client.global.get("newUserId"), "用户ID应匹配");
+  client.assert(response.body.name === "测试用户", "用户名应匹配");
+  client.assert(response.body.email === "test@example.com", "邮箱应匹配");
+});
+%}
+
+###
+
+### 4. 更新用户信息
+PUT {{baseUrl}}/{{apiVersion}}/users/{{newUserId}}
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "name": "更新后的测试用户",
+  "email": "updated@example.com",
+  "age": 26,
+  "department": "更新测试部"
+}
+
+> {%
+client.test("更新用户 - 状态码检查", function() {
+  client.assert(response.status === 200, "更新成功状态码应为200");
+});
+
+client.test("更新用户 - 数据更新检查", function() {
+  client.assert(response.body.name === "更新后的测试用户", "用户名应已更新");
+  client.assert(response.body.email === "updated@example.com", "邮箱应已更新");
+});
+%}
+
+###
+
+### 5. 搜索用户
+GET {{baseUrl}}/{{apiVersion}}/users/search?name=测试&department=更新测试部&page=1&limit=10
+Accept: application/json
+Authorization: Bearer {{apiKey}}
+
+> {%
+client.test("搜索用户 - 状态码检查", function() {
+  client.assert(response.status === 200, "搜索状态码应为200");
+});
+
+client.test("搜索用户 - 结果验证", function() {
+  client.assert(response.body.users && Array.isArray(response.body.users), "搜索结果应包含用户数组");
+
+  // 检查是否找到我们创建的用户
+  var foundUser = response.body.users.find(function(user) {
+    return user.id == client.global.get("newUserId");
+  });
+  client.assert(foundUser, "应能搜索到新创建的用户");
+});
+%}
+
+###
+
+### 6. 用户登录测试
+POST {{baseUrl}}/{{apiVersion}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "updated@example.com",
+  "password": "{{password}}"
+}
+
+> {%
+client.test("用户登录 - 状态码检查", function() {
+  client.assert(response.status === 200, "登录状态码应为200");
+});
+
+client.test("用户登录 - Token生成检查", function() {
+  client.assert(response.body.token, "响应应包含access token");
+  client.assert(response.body.refreshToken, "响应应包含refresh token");
+  client.global.set("userToken", response.body.token);
+  client.global.set("refreshToken", response.body.refreshToken);
+});
+%}
+
+###
+
+### 7. 使用Token访问受保护资源
+GET {{baseUrl}}/{{apiVersion}}/profile
+Accept: application/json
+Authorization: Bearer {{userToken}}
+
+> {%
+client.test("Token验证 - 状态码检查", function() {
+  client.assert(response.status === 200, "Token验证状态码应为200");
+});
+
+client.test("Token验证 - 用户信息检查", function() {
+  client.assert(response.body.email === "updated@example.com", "用户邮箱应匹配");
+});
+%}
+
+###
+
+### 8. 删除创建的用户
+DELETE {{baseUrl}}/{{apiVersion}}/users/{{newUserId}}
+Authorization: Bearer {{apiKey}}
+
+> {%
+client.test("删除用户 - 状态码检查", function() {
+  client.assert(response.status === 204, "删除成功状态码应为204");
+});
+%}
+
+###
+
+### 9. 验证用户已删除
+GET {{baseUrl}}/{{apiVersion}}/users/{{newUserId}}
+Accept: application/json
+Authorization: Bearer {{apiKey}}
+
+> {%
+client.test("用户删除验证 - 状态码检查", function() {
+  client.assert(response.status === 404, "已删除用户应返回404");
+});
+%}
+
+###
+
+### 10. 性能测试 - 批量创建用户
+POST {{baseUrl}}/{{apiVersion}}/users/batch
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+[
+  {
+    "name": "批量用户1",
+    "email": "batch1@example.com",
+    "age": 25
+  },
+  {
+    "name": "批量用户2",
+    "email": "batch2@example.com",
+    "age": 30
+  },
+  {
+    "name": "批量用户3",
+    "email": "batch3@example.com",
+    "age": 35
+  }
+]
+
+> {%
+client.test("批量创建 - 状态码检查", function() {
+  client.assert(response.status === 201, "批量创建状态码应为201");
+});
+
+client.test("批量创建 - 数量检查", function() {
+  client.assert(response.body.createdCount === 3, "应创建3个用户");
+});
+%}
+
+###
+
+### 11. API 健康检查
+GET {{baseUrl}}/health
+Accept: application/json
+
+> {%
+client.test("健康检查 - 状态码检查", function() {
+  client.assert(response.status === 200, "健康检查状态码应为200");
+});
+
+client.test("健康检查 - 服务状态检查", function() {
+  client.assert(response.body.status === "healthy", "服务状态应为healthy");
+  client.assert(response.body.uptime > 0, "运行时间应大于0");
+});
+%}
+
+###
+
+### 12. 测试清理 - 删除批量创建的用户
+DELETE {{baseUrl}}/{{apiVersion}}/users/batch
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "emails": ["batch1@example.com", "batch2@example.com", "batch3@example.com"]
+}
+
+> {%
+client.test("批量删除清理 - 状态码检查", function() {
+  client.assert(response.status === 200, "批量删除状态码应为200");
+});
+%}

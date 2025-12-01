@@ -1,0 +1,134 @@
+### 上传单个文件
+POST {{baseUrl}}/{{apiVersion}}/upload/single
+Content-Type: multipart/form-data
+
+< ./test.txt
+
+###
+
+### 上传多个文件
+POST {{baseUrl}}/{{apiVersion}}/upload/multiple
+Content-Type: multipart/form-data
+
+< ./file1.txt
+< ./file2.txt
+
+###
+
+### 上传带内容的文件
+POST {{baseUrl}}/{{apiVersion}}/upload/content
+Content-Type: multipart/form-data
+
+< ./test.txt
+
+Hello, World!
+
+###
+
+### 上传文件并附加表单数据
+POST {{baseUrl}}/{{apiVersion}}/upload/with-data
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="description"
+
+这是文件的描述信息
+--boundary
+Content-Disposition: form-data; name="category"
+
+document
+--boundary
+Content-Disposition: form-data; name="tags"
+
+test,upload,example
+--boundary
+Content-Disposition: form-data; name="file"; filename="document.pdf"
+Content-Type: application/pdf
+
+< ./document.pdf
+--boundary--
+
+###
+
+### 上传JSON数据
+POST {{baseUrl}}/{{apiVersion}}/upload/json
+Content-Type: application/json
+
+{
+  "name": "上传的JSON数据",
+  "data": {
+    "field1": "value1",
+    "field2": "value2"
+  },
+  "metadata": {
+    "uploadedBy": "{{username}}",
+    "timestamp": "{{$timestamp}}"
+  }
+}
+
+###
+
+### 上传XML数据
+POST {{baseUrl}}/{{apiVersion}}/upload/xml
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<upload>
+  <file>
+    <name>test.xml</name>
+    <content>示例XML内容</content>
+  </file>
+  <metadata>
+    <uploadedBy>{{username}}</uploadedBy>
+    <timestamp>{{$timestamp}}</timestamp>
+  </metadata>
+</upload>
+
+###
+
+### 大文件上传（流式）
+POST {{baseUrl}}/{{apiVersion}}/upload/stream
+Content-Type: application/octet-stream
+Transfer-Encoding: chunked
+
+这里是二进制文件内容...
+
+###
+
+### 分块上传 - 初始化
+POST {{baseUrl}}/{{apiVersion}}/upload/chunk/init
+Content-Type: application/json
+
+{
+  "filename": "large-file.zip",
+  "totalSize": 10485760,
+  "chunkSize": 1048576,
+  "totalChunks": 10
+}
+
+> {%
+client.test("初始化分块上传", function() {
+  client.assert(response.status === 200);
+  client.assert(response.body.uploadId);
+  client.global.set("uploadId", response.body.uploadId);
+});
+%}
+
+###
+
+### 分块上传 - 上传第一个分块
+POST {{baseUrl}}/{{apiVersion}}/upload/chunk/{{uploadId}}/1
+Content-Type: application/octet-stream
+
+这是第一个分块的数据内容...
+
+###
+
+### 分块上传 - 完成上传
+POST {{baseUrl}}/{{apiVersion}}/upload/chunk/{{uploadId}}/complete
+Content-Type: application/json
+
+{
+  "uploadId": "{{uploadId}}",
+  "totalChunks": 10
+}
