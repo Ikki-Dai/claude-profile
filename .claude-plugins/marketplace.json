@@ -1,0 +1,42 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ikki-skills",
+  "version": "1.0.0",
+  "description": "Personal Claude Skills collection for database operations, development tools, and productivity enhancement",
+  "owner": {
+    "name": "ikki",
+    "email": "ikki@example.com"
+  },
+  "plugins": [
+    {
+      "name": "usql-database",
+      "description": "通用 SQL 数据库接口，使用 usql 命令行工具提供跨多种数据库系统的统一数据库访问、查询和管理功能，支持 PostgreSQL、MySQL、Oracle、SQLite、SQL Server 等 20+ 种数据库的中文界面。",
+      "source": "./skills/usql-database",
+      "category": "development"
+    },
+    {
+      "name": "maven-gav-search",
+      "description": "Search Maven artifacts by GAV (GroupId, ArtifactId, Version) using Aliyun Maven repository API with intelligent version sorting for Java development and dependency management.",
+      "source": "./skills/maven-gav-search",
+      "category": "development"
+    },
+    {
+      "name": "nacos-config",
+      "description": "查询 Nacos 配置中心的配置项，支持获取、列表和搜索功能，用于微服务和 Spring Cloud 应用的配置管理。",
+      "source": "./.claude/skills/nacos-config",
+      "category": "development"
+    },
+    {
+      "name": "obsidian-search",
+      "description": "搜索本地 Obsidian 知识库中的笔记和内容，支持智能分类和结果分析，用于个人知识管理和文档检索。",
+      "source": "./skills/obsidian-search",
+      "category": "productivity-organization"
+    },
+    {
+      "name": "universal-docs-search",
+      "description": "Universal technical documentation search using Context7 API for any programming language, framework, library, or technical tutorial across the entire technology ecosystem.",
+      "source": "./skills/universal-docs-search",
+      "category": "development"
+    }
+  ]
+}
