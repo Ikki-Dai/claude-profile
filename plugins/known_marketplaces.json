@@ -1,10 +1,18 @@
 {
-  "awesome-claude-skills": {
+  "claude-plugins-official": {
     "source": {
-      "source": "git",
-      "url": "https://github.com/ComposioHQ/awesome-claude-skills.git"
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
     },
-    "installLocation": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\awesome-claude-skills",
-    "lastUpdated": "2025-11-21T23:46:41.554Z"
+    "installLocation": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\claude-plugins-official",
+    "lastUpdated": "2026-01-31T12:04:11.316Z"
+  },
+  "obsidian-skills": {
+    "source": {
+      "source": "github",
+      "repo": "kepano/obsidian-skills"
+    },
+    "installLocation": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\obsidian-skills",
+    "lastUpdated": "2026-01-09T14:54:56.013Z"
   }
 }

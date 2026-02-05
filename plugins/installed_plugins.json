@@ -1,21 +1,88 @@
 {
-  "version": 1,
+  "version": 2,
   "plugins": {
-    "skill-creator@awesome-claude-skills": {
-      "version": "unknown",
-      "installedAt": "2025-11-22T01:42:15.008Z",
-      "lastUpdated": "2025-11-22T01:42:15.008Z",
-      "installPath": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\awesome-claude-skills\\skill-creator",
-      "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b",
-      "isLocal": true
-    },
-    "template-skill@awesome-claude-skills": {
-      "version": "unknown",
-      "installedAt": "2025-11-22T01:42:15.008Z",
-      "lastUpdated": "2025-11-22T01:42:15.008Z",
-      "installPath": "C:\\Users\\ikki\\.claude\\plugins\\marketplaces\\awesome-claude-skills\\template-skill",
-      "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b",
-      "isLocal": true
-    }
+    "skill-creator@awesome-claude-skills": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\awesome-claude-skills\\skill-creator\\unknown",
+        "version": "unknown",
+        "installedAt": "2025-11-22T01:42:15.008Z",
+        "lastUpdated": "2025-11-22T01:42:15.008Z",
+        "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b"
+      }
+    ],
+    "template-skill@awesome-claude-skills": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\awesome-claude-skills\\template-skill\\unknown",
+        "version": "unknown",
+        "installedAt": "2025-11-22T01:42:15.008Z",
+        "lastUpdated": "2025-11-22T01:42:15.008Z",
+        "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "local",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\unknown",
+        "version": "unknown",
+        "installedAt": "2025-12-26T14:02:05.064Z",
+        "lastUpdated": "2026-02-01T14:08:02.020Z",
+        "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a",
+        "projectPath": "E:\\workspace\\immigrant"
+      }
+    ],
+    "obsidian@obsidian-skills": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\obsidian-skills\\obsidian\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-09T14:55:16.815Z",
+        "lastUpdated": "2026-01-09T14:55:16.815Z",
+        "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a"
+      }
+    ],
+    "typescript-lsp@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "E:\\workspace\\email-plugins",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\typescript-lsp\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-09T22:50:17.160Z",
+        "lastUpdated": "2026-01-09T22:50:17.160Z",
+        "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a"
+      }
+    ],
+    "jdtls-lsp@claude-plugins-official": [
+      {
+        "scope": "local",
+        "projectPath": "E:\\workspace\\immigrant",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\jdtls-lsp\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-11T07:14:09.719Z",
+        "lastUpdated": "2026-02-01T14:08:02.020Z",
+        "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\4.1.1",
+        "version": "4.1.1",
+        "installedAt": "2026-01-31T12:05:00.533Z",
+        "lastUpdated": "2026-01-31T12:05:00.533Z",
+        "gitCommitSha": "06b92f36820f38175b2ed6ff3f8df45157d54731"
+      }
+    ],
+    "claude-md-management@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\claude-md-management\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-31T12:06:29.666Z",
+        "lastUpdated": "2026-01-31T12:06:29.666Z",
+        "gitCommitSha": "27d2b86d72da27c64585150857cee8472ad47abb"
+      }
+    ]
   }
 }
