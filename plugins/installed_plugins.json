@@ -1,16 +1,6 @@
 {
   "version": 2,
   "plugins": {
-    "skill-creator@awesome-claude-skills": [
-      {
-        "scope": "user",
-        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\awesome-claude-skills\\skill-creator\\unknown",
-        "version": "unknown",
-        "installedAt": "2025-11-22T01:42:15.008Z",
-        "lastUpdated": "2025-11-22T01:42:15.008Z",
-        "gitCommitSha": "0178590715b95da89ad521b1f1e9df28a7bfea9b"
-      }
-    ],
     "template-skill@awesome-claude-skills": [
       {
         "scope": "user",
@@ -23,13 +13,13 @@
     ],
     "frontend-design@claude-plugins-official": [
       {
-        "scope": "local",
+        "scope": "project",
+        "projectPath": "C:\\Users\\ikki",
         "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\unknown",
         "version": "unknown",
         "installedAt": "2025-12-26T14:02:05.064Z",
-        "lastUpdated": "2026-02-01T14:08:02.020Z",
-        "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a",
-        "projectPath": "E:\\workspace\\immigrant"
+        "lastUpdated": "2026-02-13T14:44:47.165Z",
+        "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a"
       }
     ],
     "obsidian@obsidian-skills": [
@@ -64,24 +54,26 @@
         "gitCommitSha": "ecc4bb6fa21695eabc6d2f99a0d7ab72f8ae033a"
       }
     ],
-    "superpowers@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\4.1.1",
-        "version": "4.1.1",
-        "installedAt": "2026-01-31T12:05:00.533Z",
-        "lastUpdated": "2026-01-31T12:05:00.533Z",
-        "gitCommitSha": "06b92f36820f38175b2ed6ff3f8df45157d54731"
-      }
-    ],
     "claude-md-management@claude-plugins-official": [
       {
-        "scope": "user",
+        "scope": "project",
         "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\claude-md-management\\1.0.0",
         "version": "1.0.0",
         "installedAt": "2026-01-31T12:06:29.666Z",
-        "lastUpdated": "2026-01-31T12:06:29.666Z",
-        "gitCommitSha": "27d2b86d72da27c64585150857cee8472ad47abb"
+        "lastUpdated": "2026-02-13T14:44:47.165Z",
+        "gitCommitSha": "27d2b86d72da27c64585150857cee8472ad47abb",
+        "projectPath": "C:\\Users\\ikki"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "project",
+        "installPath": "C:\\Users\\ikki\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\4.3.0",
+        "version": "4.3.0",
+        "installedAt": "2026-02-13T14:44:53.401Z",
+        "lastUpdated": "2026-02-13T14:44:53.401Z",
+        "gitCommitSha": "e16d611eee14ac4c3253b4bf4c55a98d905c2e64",
+        "projectPath": "C:\\Users\\ikki"
       }
     ]
   }

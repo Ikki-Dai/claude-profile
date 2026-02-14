@@ -266,7 +266,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         orderMapper.deleteById(orderId);
     }
 }
-```
+`+``
 
 ### Domain Event（领域事件）
 - **定义**：领域内已发生的事实，表示状态变更
