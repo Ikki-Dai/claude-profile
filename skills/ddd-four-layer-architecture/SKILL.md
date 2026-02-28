@@ -12,19 +12,13 @@ keywords: DDD, 领域驱动设计, 四层架构, 实体, 值对象, 聚合根, �
 
 ## 何时使用
 
-```dot
-digraph ddd_flowchart {
-    "需要组织业务代码？" [shape=diamond];
-    "核心业务逻辑复杂？" [shape=diamond];
-    "多个限界上下文？" [shape=diamond];
-    "使用 DDD 分层" [shape=box];
-    "使用更简单的结构" [shape=box];
-
-    "需要组织业务代码？" -> "核心业务逻辑复杂？" [label="是"];
-    "核心业务逻辑复杂？" -> "多个限界上下文？" [label="是"];
-    "多个限界上下文？" -> "使用 DDD 分层" [label="是"];
-    "核心业务逻辑复杂？" -> "使用更简单的结构" [label="否"];
-}
+```mermaid
+flowchart TD
+    A[需要组织业务代码？] -->|是| B{核心业务逻辑<br>复杂？}
+    B -->|是| C{多个限界<br>上下文？}
+    B -->|否| E[使用更简单的结构]
+    C -->|是| D[使用 DDD 分层]
+    C -->|否| E
 ```
 
 **适用于：**
@@ -82,12 +76,57 @@ public class AddressVO {
 }
 ```
 
+### 值对象的上下文相对性
+
+**重要**：值对象 vs 实体的划分不是绝对的，取决于**限界上下文**。
+
+同一概念在不同限界上下文中可能有不同的角色：
+
+| 概念 | 在支付订单上下文 | 在短信鉴权上下文 |
+|------|------------------|------------------|
+| 四要素（卡号等） | **值对象**（无独立生命周期，依附于支付订单） | **实体**（有独立生命周期，需要鉴权记录） |
+
+**原则**：根据当前限界上下文的业务需求决定，而非绝对标准。
+
+> 例如：地址信息在电商系统中可能是值对象，但在物流系统中可能需要作为实体进行独立跟踪和管理。
+
 ### Aggregate Root（聚合根）
-- **入口点**：访问内部对象的唯一途径
+
+**聚合根是一种特殊的实体，它满足实体的所有特征，但不是所有实体都是聚合根。**
+
+- **是实体**：拥有唯一 ID，有生命周期
+- **入口点**：访问聚合内部对象的唯一途径
 - **一致性边界**：维护业务不变量
-- **有 ID**：作为根的实体
+- **全局唯一标识**：ID 在全局范围内唯一
 - **位置**：`infrastructure/repository/aggregate/`
-- **示例**：`OrderEntity` 作为根，包含 `OrderItem` 实体
+
+**示例**：`OrderEntity` 作为根，包含 `OrderItem` 实体
+
+```java
+// 聚合根：有全局唯一 ID，是外部访问的入口
+public class OrderEntity {
+    private Long orderId;  // 全局唯一标识
+
+    // 只能通过根访问 - 永远不要直接加载 OrderItem
+    public void addItem(OrderItem item) {
+        // 维护业务不变量
+        if (status == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("已取消的订单不能添加商品");
+        }
+        items.add(item);
+    }
+}
+```
+
+### Entity vs Aggregate Root
+
+| 对比维度 | 实体 Entity | 聚合根 Aggregate Root |
+|----------|-------------|----------------------|
+| 身份标识 | 有唯一 ID | 有唯一 ID |
+| ID 作用域 | 聚合内唯一或全局唯一 | **全局唯一** |
+| 访问方式 | 只能通过聚合根访问 | 外部访问的入口点 |
+| 独立访问 | 不可被外部直接加载 | 可通过 Repository 直接加载 |
+| 生命周期 | 依附于聚合根 | 独立 |
 
 ```java
 // 聚合根
@@ -162,6 +201,7 @@ public class OrderDomainService {
 - **事务边界**：管理事务的开启和提交
 - **位置**：`application/*/`
 - **职责**：调用领域服务、仓储、发布事件等
+- **对外暴露**：可以暴露 Feign 接口给其他限界上下文调用
 
 ```java
 // 应用服务：用例编排，不包含业务逻辑
@@ -195,6 +235,18 @@ public class OrderAppService {
     }
 }
 ```
+
+### 应用服务 vs 接口层的职责边界
+
+| 关注点 | 接口层 (interfaces) | 应用层 (application) |
+|--------|---------------------|----------------------|
+| 请求处理 | 接收 HTTP/gRPC 请求，参数验证 | 调用领域服务完成用例 |
+| 数据转换 | DTO ↔ VO/Entity 转换 | VO ↔ Entity 转换（队列场景） |
+| 事务管理 | 通常不涉及 | 管理事务边界（@Transactional） |
+| 暴露方式 | REST/gRPC API | 可被其他限界上下文调用（Feign） |
+| 事件处理 | 不涉及 | 前置/后置事件处理 |
+
+> **说明**：应用层可以暴露接口给外部系统使用（如 Feign 接口），此时它承担了**协调者**的角色，负责协调多个领域服务完成复杂的业务流程。
 
 ### 领域服务 vs 应用服务
 
@@ -266,7 +318,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         orderMapper.deleteById(orderId);
     }
 }
-`+``
+```
 
 ### Domain Event（领域事件）
 - **定义**：领域内已发生的事实，表示状态变更
@@ -318,6 +370,7 @@ public class OrderEntity {
     }
 }
 ```
+
 
 ```java
 // 3. 应用服务发布事件到基础设施
@@ -474,7 +527,7 @@ cn.com.xxxx
 |-- infrastructure         // 4. 基础设施层：仓储、外部 API、工具
     |-- configuration       // Spring 配置
     |-- exceptions          // 自定义异常
-    |-- util                // 工具类
+    |-- util                // 通用工具类（字符串、集合等框架无关的工具）
     |   |-- StringUtils.java
     |-- repository          // 仓储层
     |   |-- aggregate
@@ -486,6 +539,29 @@ cn.com.xxxx
     |-- api                 // 外部 API
         |-- openfeign
         |-- grpc
+```
+
+
+### 工具类放置原则
+
+| 工具类类型 | 位置 | 示例 |
+|------------|------|------|
+| **通用工具** | `infrastructure/util/` | StringUtils（字符串处理） |
+| **框架工具** | `infrastructure/util/` | DateUtils（日期处理，使用 Java API） |
+| **领域相关工具** | `domain/*/` 或 `domain/*/util/` | OrderCalculator（订单计算器） |
+| **业务常量** | `domain/*/constant/` | OrderConstants |
+
+> **注意**：不要把领域相关的工具类错误地放到 `infrastructure/util` 层。工具类的归属取决于它的**业务相关性**，而非是否是"工具"。
+
+**拆包指导原则**：把 `公共的、不对外暴露使用的` 代码放到更深一级的目录。
+
+```text
+domain/pay/
+├── channel/
+│   ├── AbstractPay.java          # 抽象基类，放到更深层
+│   ├── Alipay.java
+│   └── WechatPay.java
+└── PayChannelInterface.java      # 对外暴露的接口
 ```
 
 ## 快速参考：归属位置
@@ -507,12 +583,14 @@ cn.com.xxxx
 |------|----------|------|
 | **Controller 中写业务逻辑** | 违反分离原则，难以测试 | 移到领域服务 |
 | **应用服务中包含业务规则** | 混淆编排与业务逻辑 | 业务规则移到领域服务 |
+| **领域服务之间平级调用** | 破坏领域服务独立性 | 通过应用层编排 |
 | **仓储中的实体没有 ID** | 值对象没有独立生命周期 | 嵌入实体或作为 VO 使用 |
 | **直接访问聚合内部对象** | 绕过一致性边界 | 始终通过聚合根访问 |
 | **基础设施层反向调用上层** | 违反单向依赖原则 | 使用依赖倒置，领域层定义接口 |
 | **接口层直接调用基础设施层** | interfaces → infrastructure 禁止 | 通过 application 或 domain 层访问 |
 | **领域层使用 DTO** | 泄露接口层关注点 | 内部使用 VO |
 | **贫血领域模型** | 业务逻辑分散 | 充血模型，包含行为 |
+| **领域工具类放到 infrastructure** | 破坏领域完整性 | 领域相关工具放在 domain 层 |
 
 ## 层级依赖规则
 
@@ -527,6 +605,45 @@ interfaces ──────────────> application ────�
 ```
 
 **基本依赖原则：只能向下调用，不能反向调用**
+
+### 领域层平级调用原则（重要）
+
+**❌ 禁止：领域服务之间直接调用**
+
+```java
+// 错误示例：领域层平级调用
+@Service
+public class OrderDomainService {
+    private PaymentDomainService paymentService;  // ❌ 领域层禁止平级调用
+
+    public void processOrder(OrderEntity order) {
+        paymentService.processPayment(order.getPayment());  // ❌ 错误
+    }
+}
+```
+
+**✅ 正确：通过应用层编排**
+
+```java
+// 正确示例：应用层编排多个领域服务
+@Service
+public class OrderAppService {
+    private OrderDomainService orderService;
+    private PaymentDomainService paymentService;  // ✅ 应用层可以协调多个领域服务
+
+    @Transactional
+    public void processOrder(OrderRequest request) {
+        OrderEntity order = orderService.createOrder(request);
+        paymentService.processPayment(order.getPayment());  // ✅ 正确
+    }
+}
+```
+
+| 规则 | 说明 |
+|------|------|
+| **领域层 → 领域层** | ❌ 禁止平级调用 |
+| **应用层 → 领域层** | ✅ 允许调用多个领域服务 |
+| **原因** | 保持领域服务的独立性，通过应用层统一编排业务流程 |
 
 | 调用方向 | 是否允许 | 说明 |
 |----------|----------|------|
@@ -569,6 +686,8 @@ public class OrderController {
     private OrderRepository repository;  // ❌ 接口层不应直接依赖基础设施层
 }
 ```
+
+
 
 ## 实现模式
 
@@ -634,3 +753,88 @@ public class OrderRepository {
 - **可测试性**：无需基础设施即可测试领域逻辑
 - **可维护性**：某一层的变更不会级联
 - **可扩展性**：限界上下文独立演进
+
+## 架构约束测试
+
+使用 [ArchUnit](https://www.archunit.org/) 进行架构约束的单元测试，确保代码符合分层规则。
+
+### 添加依赖
+
+```xml
+<dependency>
+    <groupId>com.tngtech.archunit</groupId>
+    <artifactId>archunit-junit5</artifactId>
+    <version>1.3.0</version>
+    <scope>test</scope>
+</dependency>
+```
+
+### 架构测试示例
+
+```java
+package com.yourpackage.arch;
+
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.lang.ArchRule;
+import org.junit.jupiter.api.Test;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+
+class ArchitectureTest {
+
+    @Test
+    void layeredArchitectureShouldBeRespected() {
+        JavaClasses importedClasses = new ClassFileImporter()
+            .importPackages("com.yourpackage");
+
+        ArchRule rule = layeredArchitecture()
+            .consideringAllDependencies()
+            .layer("Interfaces").definedBy("..interfaces..")
+            .layer("Application").definedBy("..application..")
+            .layer("Domain").definedBy("..domain..")
+            .layer("Infrastructure").definedBy("..infrastructure..")
+
+            // Interfaces 层不能被任何层访问
+            .whereLayer("Interfaces").mayNotBeAccessedByAnyLayer()
+
+            // Application 层只能被 Interfaces 层访问
+            .whereLayer("Application").mayOnlyBeAccessedByLayers("Interfaces")
+
+            // Domain 层只能被 Application 和 Interfaces 层访问
+            .whereLayer("Domain").mayOnlyBeAccessedByLayers("Application", "Interfaces")
+
+            // Infrastructure 层可以被 Interfaces、Application、Domain 层访问
+            .whereLayer("Infrastructure").mayOnlyBeAccessedByLayers(
+                "Interfaces", "Application", "Domain", "Infrastructure"
+            )
+
+            .because("违反了架构约束，存在不合法的跨层调用");
+
+        rule.check(importedClasses);
+    }
+
+    @Test
+    void domainServicesShouldNotCallEachOther() {
+        JavaClasses importedClasses = new ClassFileImporter()
+            .importPackages("com.yourpackage.domain");
+
+        ArchRule rule = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat()
+            .resideInAPackage("..domain..")
+            .because("领域服务之间禁止平级调用，应通过应用层编排");
+
+        rule.check(importedClasses);
+    }
+}
+```
+
+### 常用约束规则
+
+| 约束 | 代码示例 |
+|------|----------|
+| 禁止接口层调用基础设施层 | `whereLayer("Interfaces").mayNotAccessAnyLayer()` |
+| 领域层不依赖接口层 | `classes().that().resideInAPackage("..domain..").should().notDependOnClassesThat().resideInAPackage("..interfaces..")` |
+| 仓储在基础设施层实现 | `classes().that().haveNameMatching(".*Repository.*").should().resideInAPackage("..infrastructure..")` |
+
+> 将架构测试作为 CI/CD 的一部分，确保代码持续符合分层规则。
